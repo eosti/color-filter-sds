@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "color-filter-sds-generators"
+version = "0.1.0"
+description = ""
+authors = ["Reid Sox-Harris <reid@soxharris.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+requests = "^2.32.3"
+rich = "^13.9.4"
+beautifulsoup4 = "^4.12.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
