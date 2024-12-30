@@ -31,7 +31,7 @@ class RoscoFilter:
     name: str
     description: str
     rgb: tuple[int, int, int]
-    transmission: float
+    transmission: Optional[float]
     source_a: CIECoords
     source_d65: CIECoords
     brand: List[str]
@@ -78,12 +78,27 @@ def parse_html_table(table):
     return data
 
 
+def normalize_source(input: CIECoords) -> CIECoords:
+    """By convention, x and y <= 1 and Y <= 100"""
+    # Some Rosco colors specify x and y as a percentage, which we don't want
+    if input.x > 1 or input.y > 1:
+        return CIECoords(input.x / 100, input.y / 100, input.transmission_y)
+
+    return input
+
+
+def parse_rgb(input: str) -> tuple[int, int, int]:
+    return tuple(int(input[i : i + 2], 16) for i in (0, 2, 4))
+
+
+
 def get_techsheet(filter_id: str):
     body = requests.post(TECHSHEET_BASE_URL, {"ColorLabel": filter_id})
     soup = BeautifulSoup(body.content, "html.parser")
 
     # Parent table for page formatting
     parent_table = soup.find("table", class_="colorData")
+    assert parent_table is not None
     # Child tables with actual data
     color_table = parent_table.find_all("table")[0]
     transmission_table = parent_table.find_all("table")[1]
@@ -118,23 +133,20 @@ def parse_filter(id_tuple: tuple, techsheet: dict) -> RoscoFilter:
 
     logging.debug("%s (%s)", filter_id, filter_name)
 
-    rgb = tuple(int(id_tuple[1][i : i + 2], 16) for i in (0, 2, 4))
+    rgb = parse_rgb(id_tuple[1])
 
-    if "Y=0.0" in techsheet["transmission"]:
-        # Some technical filters don't have a transmission percent listed
-        # The transmission isn't actually zero but that's what the site says
-        transmission = 0
-    else:
-        try:
-            transmission = (
-                float(techsheet["transmission"].split(" ")[0].replace("%", "")) / 100
-            )
-        except ValueError:
-            # ex. P3699 is really weird transmission-wise
-            logger.warning(
-                "Unable to parse transmission of %s", techsheet["transmission"]
-            )
-            transmission = 0
+    try:
+        transmission = (
+            float(techsheet["transmission"].split(" ")[0].replace("%", "")) / 100
+        )
+    except ValueError:
+        # ex. P3699 is really weird transmission-wise, diffusion doesn't have this value
+        logger.info(
+            "Unable to parse transmission for %s of %s",
+            filter_id,
+            techsheet["transmission"],
+        )
+        transmission = None
 
     if techsheet["additional_info"] != "":
         techsheet["description"] += f" {techsheet['additional_info']}."
@@ -144,14 +156,17 @@ def parse_filter(id_tuple: tuple, techsheet: dict) -> RoscoFilter:
         techsheet["description"].replace("..", ".").replace("\u00b0", "")
     )
 
+    source_a = normalize_source(techsheet["source_a"])
+    source_d65 = normalize_source(techsheet["source_d65"])
+
     return RoscoFilter(
         filter_id=filter_id,
         name=filter_name,
         description=techsheet["description"],
         rgb=rgb,
         transmission=transmission,
-        source_a=techsheet["source_a"],
-        source_d65=techsheet["source_d65"],
+        source_a=source_a,
+        source_d65=source_d65,
         brand=techsheet["brand"].split(", "),
     )
 
