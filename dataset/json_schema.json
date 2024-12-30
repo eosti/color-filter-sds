@@ -1,0 +1,212 @@
+{
+  "$defs": {
+    "CIECoords": {
+      "properties": {
+        "x": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "CIE1931 chromaticity coordinate x",
+          "title": "x"
+        },
+        "y": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "CIE1931 chromaticity coordinate y",
+          "title": "y"
+        },
+        "Y": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "CIE1931 tristimulus coordinate Y",
+          "title": "Y"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "Y"
+      ],
+      "title": "CIECoords",
+      "type": "object"
+    },
+    "ColorFilter": {
+      "properties": {
+        "mfg": {
+          "title": "Manufacturer",
+          "type": "string"
+        },
+        "name": {
+          "title": "Filter name",
+          "type": "string"
+        },
+        "desc": {
+          "title": "Filter description",
+          "type": "string"
+        },
+        "rgb": {
+          "$ref": "#/$defs/RGB",
+          "description": "Equivalent RGB value of filter"
+        },
+        "trans": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transmission of the filter",
+          "title": "Transmission"
+        },
+        "sd": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Spectral distribution"
+        },
+        "src_a": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CIECoords"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source A xyY coordinates"
+        },
+        "src_c": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CIECoords"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source C xyY coordinates"
+        },
+        "src_d65": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CIECoords"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source D65 xyY coordinates"
+        }
+      },
+      "required": [
+        "mfg",
+        "name",
+        "desc",
+        "rgb"
+      ],
+      "title": "ColorFilter",
+      "type": "object"
+    },
+    "RGB": {
+      "properties": {
+        "r": {
+          "description": "Red value, 8-bit representation",
+          "maximum": 255,
+          "minimum": 0,
+          "title": "r",
+          "type": "integer"
+        },
+        "g": {
+          "description": "Green value, 8-bit representation",
+          "maximum": 255,
+          "minimum": 0,
+          "title": "g",
+          "type": "integer"
+        },
+        "b": {
+          "description": "Blue value, 8-bit representation",
+          "maximum": 255,
+          "minimum": 0,
+          "title": "b",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "r",
+        "g",
+        "b"
+      ],
+      "title": "RGB",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "version": {
+      "default": "0.1.0",
+      "title": "Version",
+      "type": "string"
+    },
+    "filters": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ColorFilter"
+      },
+      "title": "Filters",
+      "type": "object"
+    }
+  },
+  "required": [
+    "filters"
+  ],
+  "title": "FilterModel",
+  "type": "object"
+}
