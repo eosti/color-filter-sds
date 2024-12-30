@@ -121,13 +121,17 @@ def parse_filter(url: str):
     soup = BeautifulSoup(page.content, "html.parser")
 
     h1 = soup.find(class_="page-header__text").find("h1").text
-    try:
-        # Most filters are given as a number, these are LXXX filters
-        number = int(h1.split(" ", 1)[0])
-        filter_id = f"L{number:03}"
-    except ValueError:
+    h1_number = h1.split(" ", 1)[0]
+
+    if h1_number[-1] == "P":
+        # Some filters end with a 'P' for perforated
+        filter_id = f"L{h1_number}"
+    elif h1_number.isdigit():
+        # Most filters are displayed as 3-digit numbers
+        filter_id = f"L{h1_number}"
+    else:
         # But some specialty filters don't follow this scheme
-        filter_id = h1.split(" ", 1)[0]
+        filter_id = h1_number
 
     # This replaces a – (minus), not a - (hyphen)
     name = h1.split(" ", 1)[1].replace("–", "").strip()
@@ -145,7 +149,7 @@ def parse_filter(url: str):
 
     sd = {}
     if soup.find("circle", class_="tooltip") is None:
-        logger.info("No SD found for %s", h1)
+        logger.info("No SD found for %s", filter_id)
         sd = None
     else:
         for point in soup.find_all("circle", class_="tooltip"):
@@ -158,7 +162,7 @@ def parse_filter(url: str):
     daylight_vals = None
 
     if soup.find(class_="colour__transmissions") is None:
-        logger.info("No SD data found for %s", h1)
+        logger.info("No SD data found for %s", filter_id)
     else:
         for temperature in soup.find(class_="colour__transmissions").find_all(
             "li", recursive=False
@@ -172,6 +176,32 @@ def parse_filter(url: str):
                 daylight_vals = temperature_data
             else:
                 raise ValueError
+
+    # Manual override based on physical swatchbook info
+    if filter_id == "L270":
+        daylight_vals = SDVals(6774, 36)
+    elif filter_id == "L271":
+        daylight_vals = SDVals(6774, 0)
+    elif filter_id == "L272":
+        daylight_vals = SDVals(6774, 0, mired_shift=45)
+    elif filter_id == "L273":
+        daylight_vals = SDVals(6774, 0)
+    elif filter_id == "L274":
+        daylight_vals = SDVals(6774, 0)
+    elif filter_id == "L275":
+        daylight_vals = SDVals(6774, 36)
+    elif filter_id == "L280":
+        daylight_vals = SDVals(6774, 0)
+    elif filter_id == "L253":
+        daylight_vals = SDVals(6774, 85)
+    elif filter_id == "L256":
+        daylight_vals = SDVals(6774, 85)
+    elif filter_id == "L257":
+        daylight_vals = SDVals(6774, 85)
+    elif filter_id == "L258":
+        daylight_vals = SDVals(6774, 85)
+    elif filter_id == "L750":
+        daylight_vals = SDVals(6774, 85)
 
     return LeeFilter(
         filter_id=filter_id,
