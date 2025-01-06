@@ -2,7 +2,13 @@
 A collection of spectral distribution (SD) datasets for lighting color filters. 
 
 I couldn't find a easy-to-use dataset of filters, so I compiled one myself!
-For now, the dataset exists in `data/all_filters.json`, but I plan to eventually make other ways of accessing the data such as a Python library. 
+For now, the dataset exists in `data/filters.json`, but I plan to eventually make other ways of accessing the data such as a Python library. 
+
+There also exists a nicer-for-humans XLSX file at `data/filters.xlsx` with the following limitations:
+
+- No SD data, but will show if there is data available
+- CIE coords are displayed as a (x, y, Y) string which is going to suck to do math on
+- No formatting
 
 For each manufacturer, there is a set of 'raw' data in `generators/raw` that represents anything I could pull from the sources available. 
 These have some more specialty measurements such as stops and mired shift that only exist for certain filters and as such don't show up in the main dataset. 
@@ -34,4 +40,5 @@ The existing Rosco data is scraped from [Rosco myColor](https://us.rosco.com/en/
 - Finish Rosco dataset: the spectral distribution values exist in PDF form but that's hard to parse. 
 - Create Python module that integrates with the `colour-science` module
 - Try graphical curve fitting to get a smart-extrapolation of SD graphs
+- Clean up XLSX export
 
