@@ -1,7 +1,6 @@
 import dataclasses
 import json
 import logging
-import unicodedata
 from pathlib import Path
 from typing import List, Optional
 
@@ -36,7 +35,7 @@ class ApolloFilter:
     description: Optional[str]
     conversion: Optional[str]
     rgb: tuple[int, int, int]
-    transmission: float
+    transmission: Optional[float]
     color_description: Optional[str]
     boxes: Optional[ApolloBoxes]
 
@@ -48,12 +47,12 @@ class EnhancedJSONEncoder(json.JSONEncoder):
         """Unpacks a dataclass into a dict"""
         if dataclasses.is_dataclass(o):
             return dataclasses.asdict(o)
-        elif isinstance(o, float):
+        if isinstance(o, float):
             return round(o, 4)
         return super().default(o)
 
 
-def filter_similar_values(vals: List[float], distance: int = 2) -> List[int]:
+def filter_similar_values(vals: List[float], distance: int = 2) -> List[float]:
     """Given a list of values, converts to ints and groups similar values together"""
     vals.sort()
     return [
@@ -63,7 +62,7 @@ def filter_similar_values(vals: List[float], distance: int = 2) -> List[int]:
     ]
 
 
-def determine_boundaries(vals: List[int]) -> List[int]:
+def determine_boundaries(vals: List[float]) -> List[int]:
     """Given a list of values, determines the midpoint boundary"""
     vals.sort()
     return [int((vals[i] + vals[i + 1]) / 2) for i in range(len(vals) - 1)]
@@ -91,13 +90,13 @@ def collect_pdfs(directory: Path) -> List[Path]:
 def get_rgb_value(filter_name: str) -> tuple[int, int, int]:
     with open(Path(HEX_LOCATION).expanduser(), "r") as f:
         file = f.read()
-        vars = chompjs.parse_js_object(file)
+        js_vars = chompjs.parse_js_object(file)
 
     if filter_name == "AP1050":
         # This one doesn't have a value, but it's diffusion so white
         hex_str = "ffffff"
     else:
-        hex_str = vars[filter_name]["hex"].replace("#", "")
+        hex_str = js_vars[filter_name]["hex"].replace("#", "")
 
     rgb = tuple(int(hex_str[i : i + 2], 16) for i in (0, 2, 4))
     return rgb

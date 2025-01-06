@@ -1,6 +1,7 @@
 {
   "$defs": {
     "CIECoords": {
+      "description": "Dataclass for CIE xyY coordinates",
       "properties": {
         "x": {
           "anyOf": [
@@ -54,9 +55,11 @@
       "type": "object"
     },
     "ColorFilter": {
+      "description": "Dataclass for common filter information",
       "properties": {
-        "mfg": {
-          "title": "Manufacturer",
+        "brand": {
+          "description": "Brand or family of filter",
+          "title": "Brand",
           "type": "string"
         },
         "name": {
@@ -149,7 +152,7 @@
         }
       },
       "required": [
-        "mfg",
+        "brand",
         "name",
         "desc",
         "rgb"
@@ -158,6 +161,7 @@
       "type": "object"
     },
     "RGB": {
+      "description": "Dataclass for RGB values",
       "properties": {
         "r": {
           "description": "Red value, 8-bit representation",
@@ -190,9 +194,10 @@
       "type": "object"
     }
   },
+  "description": "Schema for base filter model",
   "properties": {
     "version": {
-      "default": "0.1.0",
+      "default": "0.2.0",
       "title": "Version",
       "type": "string"
     },

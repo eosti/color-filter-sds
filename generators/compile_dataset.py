@@ -59,7 +59,7 @@ SDDict = Dict[int, Decimal]
 @dataclass
 class ColorFilter:
     """Dataclass for common filter information"""
-    mfg: str = Field(title="Manufacturer")
+    brand: str = Field(title="Brand", description="Brand or family of filter")
     name: str = Field(title="Filter name")
     desc: str = Field(title="Filter description")
     rgb: RGB = Field(title="RGB", description="Equivalent RGB value of filter")
@@ -95,7 +95,7 @@ class ColorFilter:
 
         return {
             data["filter_id"]: cls(
-                mfg="Apollo",
+                brand="Apollo",
                 name=data["name"],
                 desc=data["description"],
                 rgb=RGB(*data["rgb"]),
@@ -125,7 +125,7 @@ class ColorFilter:
 
         return {
             data["filter_id"]: cls(
-                mfg="Lee",
+                brand="Lee",
                 name=data["name"],
                 desc=data["description"],
                 rgb=RGB(*data["rgb"]),
@@ -152,9 +152,12 @@ class ColorFilter:
         source_a = dict_to_cie(data["source_a"])
         source_d65 = dict_to_cie(data["source_d65"])
 
+        # Cinegel and Superlux filters will display as Roscolux
+        brand = data["brand"][0]
+
         return {
             data["filter_id"]: cls(
-                mfg="Rosco",
+                brand=brand,
                 name=data["name"],
                 desc=data["description"],
                 rgb=RGB(*data["rgb"]),
@@ -181,7 +184,7 @@ FilterDict = Dict[str, ColorFilter]
 
 class FilterModel(BaseModel):
     """Schema for base filter model"""
-    version: str = "0.1.0"
+    version: str = "0.2.0"
     filters: FilterDict
 
 
@@ -236,13 +239,13 @@ def main():
     all_filters.update(ingest_lee())
     all_filters.update(ingest_rosco())
 
-    logger.info("Ingested %i filters", len(all_filters))
+    logger.info("Total number of filters: %i", len(all_filters))
 
     with open("../dataset/json_schema.json", "w") as f:
         schema = FilterModel.model_json_schema()
         f.write(json.dumps(schema, indent=2))
 
-    with open("../dataset/all_filters.json", "w") as f:
+    with open("../dataset/filters.json", "w") as f:
         model = FilterModel(filters=all_filters)
         f.write(model.model_dump_json())
 
