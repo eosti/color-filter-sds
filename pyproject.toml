@@ -1,12 +1,20 @@
 [tool.poetry]
-name = "color-filter-sds-generators"
+name = "lighting_filters"
 version = "0.1.0"
 description = ""
 authors = ["Reid Sox-Harris <reid@soxharris.com>"]
+license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "^3.9"
+pydantic = "^2.10.4"
+
+
+[tool.poetry.group.generators]
+optional = true
+
+[tool.poetry.group.generators.dependencies]
 requests = "^2.32.3"
 rich = "^13.9.4"
 beautifulsoup4 = "^4.12.3"
@@ -17,12 +25,22 @@ pydantic = "^2.10.4"
 openpyxl = "^3.1.5"
 
 
+[tool.poetry.group.dev]
+optional = true
+
 [tool.poetry.group.dev.dependencies]
 types-requests = "^2.32.0.20241016"
 types-beautifulsoup4 = "^4.12.0.20241020"
 mypy = "^1.14.0"
 pylint = "^3.3.3"
+black = "^24.10.0"
+isort = "^5.13.2"
+
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+include = [
+    { path = "dataset", format = ["sdist", "wheel"] }
+]
