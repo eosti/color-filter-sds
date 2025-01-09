@@ -91,7 +91,6 @@ def parse_rgb(input: str) -> tuple[int, int, int]:
     return tuple(int(input[i : i + 2], 16) for i in (0, 2, 4))
 
 
-
 def get_techsheet(filter_id: str):
     body = requests.post(TECHSHEET_BASE_URL, {"ColorLabel": filter_id})
     soup = BeautifulSoup(body.content, "html.parser")
