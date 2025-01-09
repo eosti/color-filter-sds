@@ -23,6 +23,9 @@ class CIECoords:
         """Returns string-based coordinates"""
         return f"({self.x}, {self.y}, {self.Y})"
 
+    def as_tuple(self) -> tuple[Decimal, Decimal, Decimal]:
+        return (self.x, self.y, self.y)
+
 
 @dataclass
 class RGB:
@@ -41,6 +44,31 @@ class RGB:
     def to_hex(self) -> str:
         """Returns hexcode of RGB coords"""
         return f"#{self.r:02x}{self.g:02x}{self.b:02x}"
+
+    def as_tuple(self) -> tuple[int, int, int]:
+        """Returns (r, g, b) tuple"""
+        return (self.r, self.g, self.b)
+
+    def luminance(self) -> float:
+        """Calculates Luminance (Y) of sRGB values"""
+        return 0.2126 * self.sRGBtoLin(self.r) + 0.7152 * self.sRGBtoLin(self.g) + 0.0722 * self.sRGBtoLin(self.b)
+
+    def perceived_lightness(self) -> float:
+        """Calculates perceived lightness, or L*"""
+        Y = self.luminance()
+        if Y <= (216/24389):
+            return Y * (24389/27)
+        else:
+            return pow(Y, (1/3)) * 116 - 16
+
+    @staticmethod
+    def sRGBtoLin(channel: int) -> float:
+        """Takes an sRGB 8-bit value, returns linear value between 0 and 1"""
+        decimal_channel = channel / 255
+        if decimal_channel <= 0.04045:
+            return decimal_channel / 12.92
+        else:
+            return pow(((decimal_channel + 0.055) / 1.055), 2.4)
 
 
 SDDict = Dict[int, Decimal]
