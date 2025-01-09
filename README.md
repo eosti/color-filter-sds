@@ -1,8 +1,9 @@
 # color-filter-sds
-A collection of spectral distribution (SD) datasets for lighting color filters. 
+A collection of data for lighting color filters. 
 
-I couldn't find a easy-to-use dataset of filters, so I compiled one myself!
-For now, the dataset exists in `data/filters.json`, but I plan to eventually make other ways of accessing the data such as a Python library. 
+# Usage
+The complete dataset exists in `dataset/filters.json`.
+For usage with other programs, the `json_schema.json` contains an annotated description of how the dataset is organized. 
 
 There also exists a nicer-for-humans XLSX file at `data/filters.xlsx` with the following limitations:
 
@@ -10,16 +11,29 @@ There also exists a nicer-for-humans XLSX file at `data/filters.xlsx` with the f
 - CIE coords are displayed as a (x, y, Y) string which is going to suck to do math on
 - No formatting
 
-For each manufacturer, there is a set of 'raw' data in `generators/raw` that represents anything I could pull from the sources available. 
+For each manufacturer, there is also a set of 'raw' data in `generators/raw` that represents anything I could pull from the sources available. 
 These have some more specialty measurements such as stops and mired shift that only exist for certain filters and as such don't show up in the main dataset. 
 The raw data is not as uniformly manicured as the main dataset, so some additional poking around may be needed. 
-These raw datasets are what the main dataset is derived from, so the data should agree with each other. 
+
+## Python
+For usage in Python applications, you can install the package with `pip install lighting_filters`.
+Usage is straightforward: 
+
+```python
+from lighting_filters import LightingFilters
+
+filters = LightingFilters()
+print(filters["R54"])
+```
+
+Examples of how the library can be used are found in `examples/`.
 
 # Sources
 All filter data is owned by their respective companies, I did not measure or characterize any filter myself. 
 All data here is publicly available, provided by the manufacturer to the end user. 
 For more granular data or for commercial licensing, please contact the manufacturer. 
-I do not work for nor am affiliated with any filter manufacturer, so please don't ask me about it!
+
+To play around with the generators in `generators/`, install prerequisites using `poetry install --with=generators`.
 
 ## Apollo
 The Apollo data is pulled from a set of swatchbook PDFs kindly provided to me by Apollo -- this repo does not contain these PDFs, but the parsing code is available. 
@@ -38,7 +52,7 @@ The existing Rosco data is scraped from [Rosco myColor](https://us.rosco.com/en/
 
 # Future Work
 - Finish Rosco dataset: the spectral distribution values exist in PDF form but that's hard to parse. 
-- Create Python module that integrates with the `colour-science` module
+- Integrate `lighting_filters` with `colour-science`
 - Try graphical curve fitting to get a smart-extrapolation of SD graphs
 - Clean up XLSX export
 
