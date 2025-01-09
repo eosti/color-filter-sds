@@ -1,10 +1,14 @@
 [tool.poetry]
 name = "lighting_filters"
-version = "0.1.0"
-description = ""
+version = "0.1.1"
+description = "A collection of data relating to lighting color filters"
 authors = ["Reid Sox-Harris <reid@soxharris.com>"]
 license = "MIT"
 readme = "README.md"
+
+include = [
+    { path = "dataset/*.json", format = ["sdist", "wheel"] }
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -40,7 +44,3 @@ isort = "^5.13.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-include = [
-    { path = "dataset", format = ["sdist", "wheel"] }
-]
