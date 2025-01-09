@@ -6,9 +6,7 @@ from typing import List, Optional
 
 from pydantic import TypeAdapter
 
-from .typedef import (
-    FilterModel,
-)  # TODO: make these names all the same Color -> Lighting
+from .typedef import FilterModel
 
 logger = logging.getLogger(__name__)
 

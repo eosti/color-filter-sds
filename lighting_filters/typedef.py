@@ -47,7 +47,7 @@ SDDict = Dict[int, Decimal]
 
 
 @dataclass
-class ColorFilter:
+class LightingFilter:
     """Dataclass for common filter information"""
 
     brand: str = Field(title="Brand", description="Brand or family of filter")
@@ -69,7 +69,7 @@ class ColorFilter:
     )
 
 
-FilterDict = Dict[str, ColorFilter]
+FilterDict = Dict[str, LightingFilter]
 
 
 class FilterModel(BaseModel):

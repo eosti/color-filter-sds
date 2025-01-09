@@ -9,7 +9,7 @@ from typing import Dict, Optional, Self
 from lighting_filters.typedef import (
     RGB,
     CIECoords,
-    ColorFilter,
+    LightingFilter,
     FilterDict,
     FilterModel,
     SDDict,
@@ -34,8 +34,8 @@ def dict_to_cie(input_dict: dict) -> Optional[CIECoords]:
     )
 
 
-class ColorFilterIngest(ColorFilter):
-    """Extension of ColorFilter type with ingestion functions"""
+class LightingFilterIngest(LightingFilter):
+    """Extension of LightingFilter type with ingestion functions"""
 
     @classmethod
     def from_apollo(cls, data: dict) -> Dict[str, Self]:
@@ -146,7 +146,7 @@ def ingest_apollo() -> FilterDict:
 
     apollo_filters = {}
     for f in raw:
-        apollo_filters.update(ColorFilterIngest.from_apollo(f))
+        apollo_filters.update(LightingFilterIngest.from_apollo(f))
 
     logger.info("Ingested %i Apollo filters", len(apollo_filters))
     return apollo_filters
@@ -159,7 +159,7 @@ def ingest_lee() -> FilterDict:
 
     lee_filters = {}
     for f in raw:
-        lee_filters.update(ColorFilterIngest.from_lee(f))
+        lee_filters.update(LightingFilterIngest.from_lee(f))
 
     logger.info("Ingested %i Lee filters", len(lee_filters))
     return lee_filters
@@ -172,7 +172,7 @@ def ingest_rosco() -> FilterDict:
 
     rosco_filters = {}
     for f in raw:
-        rosco_filters.update(ColorFilterIngest.from_rosco(f))
+        rosco_filters.update(LightingFilterIngest.from_rosco(f))
 
     logger.info("Ingested %i Rosco filters", len(rosco_filters))
     return rosco_filters
@@ -206,7 +206,7 @@ def main():
     # TODO: color in rgb cell, export CIE xyY as individual cells, sort by gel ID
     wb = Workbook()
     ws = wb.active
-    header = [x.name for x in dataclasses.fields(ColorFilter)]
+    header = [x.name for x in dataclasses.fields(LightingFilter)]
     ws.append(["id"] + header)
     for key, val in all_filters.items():
         data = [key]
