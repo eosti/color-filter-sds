@@ -1,3 +1,5 @@
+"""Type definitions for the filter dataset"""
+
 from decimal import Decimal
 from typing import Dict, Optional
 
@@ -24,6 +26,7 @@ class CIECoords:
         return f"({self.x}, {self.y}, {self.Y})"
 
     def as_tuple(self) -> tuple[Decimal, Decimal, Decimal]:
+        """Returns (x, y, Y) tuple"""
         return (self.x, self.y, self.y)
 
 
@@ -51,15 +54,18 @@ class RGB:
 
     def luminance(self) -> float:
         """Calculates Luminance (Y) of sRGB values"""
-        return 0.2126 * self.sRGBtoLin(self.r) + 0.7152 * self.sRGBtoLin(self.g) + 0.0722 * self.sRGBtoLin(self.b)
+        return (
+            0.2126 * self.sRGBtoLin(self.r)
+            + 0.7152 * self.sRGBtoLin(self.g)
+            + 0.0722 * self.sRGBtoLin(self.b)
+        )
 
     def perceived_lightness(self) -> float:
         """Calculates perceived lightness, or L*"""
         Y = self.luminance()
-        if Y <= (216/24389):
-            return Y * (24389/27)
-        else:
-            return pow(Y, (1/3)) * 116 - 16
+        if Y <= (216 / 24389):
+            return Y * (24389 / 27)
+        return pow(Y, (1 / 3)) * 116 - 16
 
     @staticmethod
     def sRGBtoLin(channel: int) -> float:
@@ -67,8 +73,7 @@ class RGB:
         decimal_channel = channel / 255
         if decimal_channel <= 0.04045:
             return decimal_channel / 12.92
-        else:
-            return pow(((decimal_channel + 0.055) / 1.055), 2.4)
+        return pow(((decimal_channel + 0.055) / 1.055), 2.4)
 
 
 SDDict = Dict[int, Decimal]

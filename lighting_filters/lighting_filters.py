@@ -1,3 +1,5 @@
+"""Exports JSON dataset into a Pythonic format"""
+
 import importlib
 import json
 import logging
@@ -12,11 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 class LightingFilters(dict):
+    """dict that is preloaded with data from the JSON dataset"""
+
     def __init__(
         self,
         brand_filter: Optional[str | List[str]] = None,
         dataset_path: Optional[str] = None,
     ):
+        """Loads dict with data in JSON, optionally filters for certain brands"""
 
         if dataset_path is None:
             dataset_file = importlib.resources.files("dataset") / "filters.json"
@@ -35,11 +40,11 @@ class LightingFilters(dict):
 
         if brand_filter is None:
             filtered_filters = all_filters
-        elif type(brand_filter) is str:
+        elif isinstance(brand_filter, str):
             filtered_filters = {
                 k: v for k, v in all_filters.items() if v.brand == brand_filter
             }
-        elif type(brand_filter) is list:
+        elif isinstance(brand_filter, list):
             filtered_filters = {}
             for brand in brand_filter:
                 filtered_filters.update(
@@ -54,3 +59,5 @@ class LightingFilters(dict):
         logger.info("Loaded %s filters", len(filtered_filters))
 
         super().__init__(filtered_filters)
+
+    # TODO: make this class unwritable after init
