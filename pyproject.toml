@@ -1,19 +1,19 @@
-[tool.poetry]
+[project]
 name = "lighting_filters"
-version = "0.1.1"
+version = "0.1.2"
 description = "A collection of data relating to lighting color filters"
-authors = ["Reid Sox-Harris <reid@soxharris.com>"]
+authors = [{name="Reid Sox-Harris", email="reid@soxharris.com"}]
 license = "MIT"
 readme = "README.md"
 
 include = [
     { path = "dataset/*.json", format = ["sdist", "wheel"] }
 ]
+requires-python = ">=3.9"
+dependencies = ["pydantic (>=2.10.4,<3.0)"]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-pydantic = "^2.10.4"
-
+[tool.poetry]
+requires-poetry = ">=2.0"
 
 [tool.poetry.group.generators]
 optional = true
@@ -28,7 +28,6 @@ chompjs = "^1.3.0"
 pydantic = "^2.10.4"
 openpyxl = "^3.1.5"
 
-
 [tool.poetry.group.dev]
 optional = true
 
@@ -42,5 +41,5 @@ isort = "^5.13.2"
 
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
